@@ -1,0 +1,96 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+/* hide scrollbar for carousel scroll areas if you use custom carousels */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* parallax container and leaves */
+.parallax-wrap {
+  will-change: transform;
+  pointer-events: none; /* let clicks pass through */
+}
+
+/* optional leaf fine-tuning */
+.leaf { transform-origin: center; }
+
+/* in src/index.css or App.css */
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+
+
+/* ensure HowItWorks section is readable and not dimmed */
+.how-it-works,
+.how-it-works * {
+  color: #064e3b !important;     /* dark green for accessibility */
+  opacity: 1 !important;
+  -webkit-text-fill-color: #064e3b !important;
+}
+
+/* hide any overlay/vignette that may be inserted by other components */
+.how-it-works::before,
+.how-it-works::after,
+.how-it-works .overlay,
+.how-it-works .vignette,
+.how-it-works .parallax-overlay,
+.how-it-works .bg-overlay {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* card visuals */
+.how-it-works article {
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.how-it-works article:focus,
+.how-it-works article:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(6,95,70,0.08);
+  outline: none;
+}
