@@ -1,12 +1,13 @@
 // src/Components/Navbar.jsx
 import { useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Leaf } from "lucide-react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     function onKey(e) {
@@ -18,6 +19,25 @@ export default function Navbar() {
 
   const active = "text-violet-600 font-semibold";
   const inactive = "text-slate-700 hover:text-violet-600 transition";
+
+  // Feature click behavior:
+  // - If we are on "/" => dispatch a custom event so Home can scroll to the features ref.
+  // - Else navigate to /features.
+  function onClickFeatures() {
+    if (location.pathname === "/") {
+      // keep mobile drawer handling
+      setOpen(false);
+      // set optional hash (not strictly required) and dispatch event
+      if (window.history && window.history.pushState) {
+        // push hash for visibility in URL (optional)
+        window.history.pushState(null, "", "#features");
+      }
+      window.dispatchEvent(new CustomEvent("scroll-to-features"));
+    } else {
+      navigate("/features");
+      setOpen(false);
+    }
+  }
 
   return (
     <nav className="sticky top-0 z-50 bg-white/40 backdrop-blur-md border-b border-white/10">
@@ -41,9 +61,13 @@ export default function Navbar() {
             Home
           </NavLink>
 
-          <NavLink to="/features" className={({ isActive }) => (isActive ? active : inactive)}>
+          {/* Use a button handler instead of NavLink to enable scroll-on-home behavior */}
+          <button
+            onClick={onClickFeatures}
+            className={`bg-transparent p-0 ${location.pathname === "/features" ? active : inactive}`}
+          >
             Features
-          </NavLink>
+          </button>
 
           <NavLink to="/database" className={({ isActive }) => (isActive ? active : inactive)}>
             Database
@@ -95,15 +119,15 @@ export default function Navbar() {
                 Home
               </NavLink>
 
-              <NavLink
-                to="/features"
-                onClick={() => setOpen(false)}
-                className={({ isActive }) =>
-                  `py-3 px-3 rounded-lg ${isActive ? "bg-violet-50 text-violet-700 font-semibold" : "text-slate-700 hover:bg-violet-50"}`
-                }
+              {/* Mobile features uses same handler */}
+              <button
+                onClick={() => {
+                  onClickFeatures();
+                }}
+                className="text-left py-3 px-3 rounded-lg text-slate-700 hover:bg-violet-50"
               >
                 Features
-              </NavLink>
+              </button>
 
               <NavLink
                 to="/database"

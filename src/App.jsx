@@ -11,52 +11,36 @@ import HerbsDatabase from "./Components/HerbsDatabase";
 import Slideshow from "./Components/Slideshow";
 import Chatbot from "./Components/Chatbot";
 
-/**
- * App = Landing page container
- * Keeps Navbar persistent and composes landing sections.
- */
 export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-violet-50 via-emerald-50 to-white text-slate-900">
       <Navbar />
 
       <main className="flex-1">
-        {/* Hero with subtle entrance */}
         <motion.section
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <Hero />
+          <Hero theme="vibrant" />
         </motion.section>
 
-        {/* Features grid (staggered container) */}
-        <section className="max-w-7xl mx-auto px-6 mt-12">
+        <section className="max-w-7xl mx-auto px-6">
           <motion.div
+            className="mt-12"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.12 }}
             variants={{
               hidden: {},
-              visible: { transition: { staggerChildren: 0.12 } },
+              visible: { transition: { staggerChildren: 0.14 } },
             }}
           >
+            {typeof Features === "function" ? <Features /> : null}
             <FeaturesGrid />
           </motion.div>
         </section>
 
-        {/* Herb track */}
-        <motion.section
-          className="mt-12"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <Herbtrack />
-        </motion.section>
-
-        {/* How it works */}
         <motion.section
           className="mt-12"
           initial={{ opacity: 0 }}
@@ -64,10 +48,19 @@ export default function App() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
+          <Herbtrack />
+        </motion.section>
+
+        <motion.section
+          className="mt-12"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           <HowItWorks />
         </motion.section>
 
-        {/* Database & slideshow */}
         <section className="mt-12">
           <HerbsDatabase />
         </section>
@@ -76,15 +69,13 @@ export default function App() {
           <Slideshow />
         </section>
 
-        {/* Chatbot floating action */}
         <Chatbot />
 
-        {/* spacer to avoid overlap with floating elements */}
         <div className="h-28" />
       </main>
 
-      <footer className="w-full py-6 text-center text-sm text-slate-600 border-t bg-white/30 backdrop-blur-sm">
-        © {new Date().getFullYear()} HerbTrack • Crafted with React & Tailwind
+      <footer className="w-full py-6 text-center text-sm text-slate-600 border-t">
+        © {new Date().getFullYear()} HerbTrack • Crafted with care ✨
       </footer>
     </div>
   );
