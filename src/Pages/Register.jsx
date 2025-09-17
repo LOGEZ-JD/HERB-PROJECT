@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
+
 export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", pw: "" });
   const navigate = useNavigate();
