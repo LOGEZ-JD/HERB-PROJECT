@@ -9,6 +9,7 @@ import BlockchainDashboard from "./Pages/BlockchainDashboard";
 import Traceability from "./Pages/Traceability";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 import "./index.css";
 
@@ -20,8 +21,8 @@ createRoot(document.getElementById("root")).render(
         <Route path="/" element={<App />} />
 
         {/* Dashboards */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/blockchain" element={<BlockchainDashboard />} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/blockchain" element={<ProtectedRoute><BlockchainDashboard /></ProtectedRoute>} />
 
         {/* Other pages */}
         <Route path="/trace" element={<Traceability />} />

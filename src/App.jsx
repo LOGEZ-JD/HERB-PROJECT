@@ -1,6 +1,8 @@
 // src/App.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
 
 import Navbar from "./Components/Navbar";
 import Hero from "./Components/Hero";
@@ -12,9 +14,18 @@ import Slideshow from "./Components/Slideshow";
 import Chatbot from "./Components/Chatbot";
 
 export default function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-violet-50 via-emerald-50 to-white text-slate-900">
-      <Navbar />
+      <Navbar user={user} />
 
       <main className="flex-1">
         <motion.section

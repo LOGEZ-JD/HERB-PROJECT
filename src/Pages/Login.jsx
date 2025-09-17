@@ -1,17 +1,24 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
-    // demo
-    alert("Logged in (demo)");
-    navigate("/dashboard");
+    setError(null);
+    try {
+      await signInWithEmailAndPassword(auth, email, pw);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   return (
@@ -25,6 +32,8 @@ export default function Login() {
 
         <label className="text-sm text-slate-600">Password</label>
         <input type="password" className="w-full px-3 py-2 rounded border mb-4" value={pw} onChange={(e) => setPw(e.target.value)} />
+
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
         <button type="submit" className="w-full py-2 bg-violet-600 text-white rounded-lg">Sign in</button>
 

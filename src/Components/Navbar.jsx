@@ -4,8 +4,12 @@ import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Leaf } from "lucide-react";
 
+import { auth } from "../firebase"; // make sure firebase.js exports `auth`
+import { signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth";
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null); // auth user
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -15,6 +19,14 @@ export default function Navbar() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // subscribe to auth changes
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+    });
+    return () => unsub();
   }, []);
 
   const active = "text-violet-600 font-semibold";
@@ -39,6 +51,17 @@ export default function Navbar() {
     }
   }
 
+  async function handleSignOut() {
+    try {
+      await firebaseSignOut(auth);
+      setOpen(false);
+      navigate("/"); // redirect to home after sign out
+    } catch (err) {
+      console.error("Sign out failed:", err);
+      // Optionally show a toast or alert here
+    }
+  }
+
   return (
     <nav className="sticky top-0 z-50 bg-white/40 backdrop-blur-md border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -56,33 +79,71 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <div className="hidden md:flex items-center gap-8">
-          <NavLink end to="/" className={({ isActive }) => (isActive ? active : inactive)}>
-            Home
-          </NavLink>
+        <div className="hidden md:flex items-center gap-6">
+          <div className="flex items-center gap-8">
+            <NavLink end to="/" className={({ isActive }) => (isActive ? active : inactive)}>
+              Home
+            </NavLink>
 
-          {/* Use a button handler instead of NavLink to enable scroll-on-home behavior */}
-          <button
-            onClick={onClickFeatures}
-            className={`bg-transparent p-0 ${location.pathname === "/features" ? active : inactive}`}
-          >
-            Features
-          </button>
+            {/* Use a button handler instead of NavLink to enable scroll-on-home behavior */}
+            <button
+              onClick={onClickFeatures}
+              className={`bg-transparent p-0 ${location.pathname === "/features" ? active : inactive}`}
+            >
+              Features
+            </button>
 
-          <NavLink to="/database" className={({ isActive }) => (isActive ? active : inactive)}>
-            Database
-          </NavLink>
+            <NavLink to="/database" className={({ isActive }) => (isActive ? active : inactive)}>
+              Database
+            </NavLink>
 
-          <NavLink to="/trace" className={({ isActive }) => (isActive ? active : inactive)}>
-            Trace
-          </NavLink>
+            <NavLink to="/trace" className={({ isActive }) => (isActive ? active : inactive)}>
+              Trace
+            </NavLink>
+          </div>
 
-          <button
-            onClick={() => navigate("/register")}
-            className="ml-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-emerald-500 text-white rounded-full shadow-lg transform-gpu hover:scale-105 active:scale-98 focus:outline-none focus:ring-2 focus:ring-violet-300"
-          >
-            Get started
-          </button>
+          {/* Right side: user actions */}
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="flex items-center gap-3 px-3 py-1 rounded-full hover:bg-slate-100 focus:outline-none"
+                  title={user.email ?? "Account"}
+                >
+                  <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold">
+                    {(user.displayName && user.displayName[0]) || (user.email && user.email[0].toUpperCase()) || "U"}
+                  </div>
+                  <span className="hidden sm:block text-sm text-slate-700 max-w-[120px] truncate">
+                    {user.displayName ?? user.email}
+                  </span>
+                </button>
+
+                <button
+                  onClick={handleSignOut}
+                  className="ml-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-emerald-500 text-white rounded-full shadow-lg transform-gpu hover:scale-105 active:scale-98 focus:outline-none focus:ring-2 focus:ring-violet-300"
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="px-4 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-violet-600"
+                >
+                  Log in
+                </button>
+
+                <button
+                  onClick={() => navigate("/register")}
+                  className="ml-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-emerald-500 text-white rounded-full shadow-lg transform-gpu hover:scale-105 active:scale-98 focus:outline-none focus:ring-2 focus:ring-violet-300"
+                >
+                  Get started
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="md:hidden">
@@ -150,15 +211,47 @@ export default function Navbar() {
               </NavLink>
 
               <div className="pt-3">
-                <button
-                  onClick={() => {
-                    setOpen(false);
-                    navigate("/register");
-                  }}
-                  className="w-full px-4 py-2 bg-gradient-to-r from-violet-600 to-emerald-500 text-white rounded-full shadow"
-                >
-                  Get started
-                </button>
+                {user ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        setOpen(false);
+                        navigate("/profile");
+                      }}
+                      className="w-full text-left py-3 px-4 rounded-lg hover:bg-violet-50"
+                    >
+                      {user.displayName ?? user.email}
+                    </button>
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full mt-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-emerald-500 text-white rounded-full shadow"
+                    >
+                      Sign out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        setOpen(false);
+                        navigate("/login");
+                      }}
+                      className="w-full px-4 py-2 rounded-md text-sm font-medium text-slate-700 hover:bg-violet-50"
+                    >
+                      Log in
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setOpen(false);
+                        navigate("/register");
+                      }}
+                      className="w-full mt-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-emerald-500 text-white rounded-full shadow"
+                    >
+                      Get started
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
