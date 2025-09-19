@@ -1,72 +1,108 @@
-  // src/Components/Hero.jsx
-  import { motion } from "framer-motion";
-  import { useNavigate } from "react-router-dom";
+// src/Components/Hero.jsx
+import React from "react";
+import { motion } from "framer-motion";
+import { TRANS } from "../utils/anim";
 
-  export default function Hero({ theme = "vibrant" }) {
-    const navigate = useNavigate();
+// recommended: place the file at public/assets/Acalypha-indica.jpg
+const heroImage = "/assets/Acalypha-indica.jpg";
 
-    return (
-      <header className="relative overflow-hidden">
-        {/* decorative gradient wave */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-violet-100 via-emerald-50 to-white opacity-90" />
-
-        <section className="max-w-7xl mx-auto px-6 py-20 md:py-32 flex flex-col-reverse md:flex-row items-center gap-10">
+export default function Hero() {
+  return (
+    <section
+      className="w-full"
+      style={{
+        // refined soft linear gradient: mint -> pale-lavender -> near-white
+        background: "linear-gradient(180deg, #e8fff4 0%, #f0f9ff 48%, #fbfbff 100%)",
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-6 py-20 lg:py-28">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-10">
+          {/* left: text block slides in from left */}
           <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.9 }}
-            className="w-full md:w-1/2"
+            initial={{ x: -36, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={TRANS.leftIn(0.02)}
           >
-            <h2 className="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">
-              Complete Supply Chain Transparency
-            </h2>
+            <span className="inline-flex items-center gap-3 bg-white/70 px-4 py-1 rounded-full text-sm text-emerald-800 shadow-sm">
+              Real-time Location Tracking
+            </span>
 
-            <p className="mt-4 text-slate-600 max-w-xl">
-              From seed to shelf — a tamper-evident ledger for herbs combined with smart
-              recognition and community-driven data.
-            </p>
+            <motion.h1
+              // main heading uses a deep blue-teal instead of plain green
+              style={{ color: "#12355B" }}
+              initial={{ x: -30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={TRANS.leftIn(0.08)}
+              className="mt-6 text-5xl lg:text-6xl font-extrabold leading-tight"
+            >
+              Geo-Tracking Dashboard
+            </motion.h1>
 
-            <div className="mt-6 flex items-center gap-4">
-              <motion.button
-                whileHover={{ scale: 1.04, boxShadow: "0 12px 30px rgba(124,58,237,0.18)" }}
-                onClick={() => navigate("/register")}
-                className="px-6 py-3 bg-gradient-to-r from-violet-600 to-emerald-500 text-white rounded-full font-semibold shadow-md"
+            <motion.p
+              className="mt-6 text-slate-700 max-w-xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={TRANS.fade(0.12)}
+            >
+              Track the precise geographical journey of every herb batch from collection point to final destination with GPS-enabled transparency.
+            </motion.p>
+
+            <motion.div
+              className="mt-8 flex gap-4"
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={TRANS.leftIn(0.22)}
+            >
+              <a
+                href="#get-started"
+                className="inline-flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-emerald-400 text-white px-5 py-3 rounded-full shadow-md"
               >
                 Get started
-              </motion.button>
+              </a>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                onClick={() => window.scrollTo({ top: 800, behavior: "smooth" })}
-                className="px-5 py-3 rounded-full border border-slate-200 bg-white/70"
+              <a
+                href="#features"
+                className="inline-flex items-center gap-2 border px-5 py-3 rounded-full bg-white text-slate-700"
               >
                 Explore features
-              </motion.button>
-            </div>
+              </a>
+            </motion.div>
 
-            <p className="mt-6 text-xs text-slate-500">Accessible, mobile-friendly experience. Animations respect prefers-reduced-motion.</p>
+            <div className="mt-6 text-xs text-slate-500">Accessible, mobile-friendly experience. Animations use linear timing.</div>
           </motion.div>
 
+          {/* right: image slides in from right */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9 }}
-            className="w-full md:w-1/2 flex justify-center"
+            initial={{ x: 36, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={TRANS.rightIn(0.06)}
+            className="relative"
           >
-            <div className="relative w-80 h-56 md:w-[520px] md:h-[330px] rounded-3xl overflow-hidden shadow-2xl transform-gpu hover:scale-[1.02] transition">
-              <img
-                src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80"
-                alt="herbs"
-                className="object-cover w-full h-full"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-60 transition duration-400" />
-              <div className="absolute bottom-4 left-4 bg-white/80 backdrop-blur px-4 py-2 rounded-2xl shadow">
-                <div className="text-sm font-semibold text-slate-900">Herb Track • Smart recognition</div>
-                <div className="text-xs text-slate-600 mt-1">Try image-based identification and trace by QR.</div>
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden" style={{ borderRadius: 20 }}>
+              <img src={heroImage} alt="Herb" className="w-full h-72 object-cover" />
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-slate-500">Herb Track • Smart recognition</div>
+                    <div className="font-semibold text-slate-800">Image-based identification + QR</div>
+                  </div>
+                  <div className="text-xs text-slate-400">Demo</div>
+                </div>
               </div>
             </div>
+
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={TRANS.fade(0.46)}
+              className="absolute -bottom-6 left-8 bg-white rounded-xl border px-4 py-3 shadow"
+            >
+              <div className="text-xs text-slate-500">Featured</div>
+              <div className="text-sm font-semibold">Demo batch</div>
+            </motion.div>
           </motion.div>
-        </section>
-      </header>
-    );
-  }
+        </div>
+      </div>
+    </section>
+  );
+}

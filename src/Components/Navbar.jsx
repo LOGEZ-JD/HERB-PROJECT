@@ -100,6 +100,11 @@ export default function Navbar() {
             <NavLink to="/trace" className={({ isActive }) => (isActive ? active : inactive)}>
               Trace
             </NavLink>
+
+            {/* Geo-Tracking link added */}
+            <NavLink to="/geo-tracking" className={({ isActive }) => (isActive ? active : inactive)}>
+              Geo-Tracking
+            </NavLink>
           </div>
 
           {/* Right side: user actions */}
@@ -208,6 +213,17 @@ export default function Navbar() {
                 }
               >
                 Trace
+              </NavLink>
+
+              {/* Mobile Geo-Tracking link */}
+              <NavLink
+                to="/geo-tracking"
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `py-3 px-3 rounded-lg ${isActive ? "bg-violet-50 text-violet-700 font-semibold" : "text-slate-700 hover:bg-violet-50"}`
+                }
+              >
+                Geo-Tracking
               </NavLink>
 
               <div className="pt-3">

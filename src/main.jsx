@@ -7,8 +7,10 @@ import App from "./App";
 import Dashboard from "./Pages/Dashboard";
 import BlockchainDashboard from "./Pages/BlockchainDashboard";
 import Traceability from "./Pages/Traceability";
+import GeoTracking from "./Pages/GeoTracking"; // ✅ new page
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
+import FeaturesPage from "./Pages/FeaturesPage"; // ✅ dedicated Features page
 import ProtectedRoute from "./Components/ProtectedRoute";
 
 import "./index.css";
@@ -20,12 +22,28 @@ createRoot(document.getElementById("root")).render(
         {/* Home */}
         <Route path="/" element={<App />} />
 
-        {/* Dashboards */}
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/blockchain" element={<ProtectedRoute><BlockchainDashboard /></ProtectedRoute>} />
+        {/* Dashboards (protected) */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/blockchain"
+          element={
+            <ProtectedRoute>
+              <BlockchainDashboard />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Other pages */}
         <Route path="/trace" element={<Traceability />} />
+        <Route path="/geo-tracking" element={<GeoTracking />} />
+        <Route path="/features" element={<FeaturesPage />} /> {/* ✅ new route */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 

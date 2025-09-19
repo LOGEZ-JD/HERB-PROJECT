@@ -1,12 +1,10 @@
 // src/firebase.js
-
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
-// Your web app's Firebase configuration
-// NOTE: for security, move these into environment variables for production.
+// 🔒 In production, move this config into environment variables (.env)
 const firebaseConfig = {
   apiKey: "AIzaSyD__oBHowXxchNzbRPSYeFqRRfzV4xyxOU",
   authDomain: "herb-tracz.firebaseapp.com",
@@ -17,24 +15,23 @@ const firebaseConfig = {
   measurementId: "G-NZHR04H64N",
 };
 
-// Initialize Firebase app
+// Initialize Firebase core
 const app = initializeApp(firebaseConfig);
 
-// Initialize Analytics only when running in a browser environment
+// Firestore (main database)
+export const db = getFirestore(app);
+
+// Auth
+export const auth = getAuth(app);
+
+// Analytics (safe init)
 let analytics = null;
 try {
-  // getAnalytics requires a window/document (browser). This avoids crashes in SSR/test environments.
   if (typeof window !== "undefined") {
     analytics = getAnalytics(app);
   }
 } catch (err) {
-  // Fail silently — analytics isn't critical for app functionality.
-  // You can optionally log to console during development:
-  // console.warn("Firebase analytics not initialized:", err);
+  console.warn("Firebase Analytics not initialized:", err);
 }
 
-// Auth export (named) — import with: import { auth } from "./firebase";
-export const auth = getAuth(app);
-
-// Optional default export (app) if you prefer: import app from "./firebase";
 export default app;
