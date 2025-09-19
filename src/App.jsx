@@ -1,4 +1,3 @@
-
 // src/App.jsx
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -7,7 +6,6 @@ import { auth } from "./firebase";
 
 import Navbar from "./Components/Navbar";
 import Hero from "./Components/Hero";
-import Features from "./Components/Features";
 import FeaturesGrid from "./Components/FeaturesGrid";
 import Herbtrack from "./Components/Herbtrack";
 import HowItWorks from "./Components/HowItWorks";
@@ -19,8 +17,8 @@ export default function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
     });
     return () => unsubscribe();
   }, []);
@@ -30,7 +28,6 @@ export default function App() {
       <Navbar user={user} />
 
       <main className="flex-1">
-        {/* Hero */}
         <motion.section
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -39,7 +36,6 @@ export default function App() {
           <Hero theme="vibrant" />
         </motion.section>
 
-        {/* Features */}
         <section className="max-w-7xl mx-auto px-6">
           <motion.div
             className="mt-12"
@@ -51,12 +47,11 @@ export default function App() {
               visible: { transition: { staggerChildren: 0.14 } },
             }}
           >
-            <Features />
+            {typeof Features === "function" ? <Features /> : null}
             <FeaturesGrid />
           </motion.div>
         </section>
 
-        {/* Herb Track */}
         <motion.section
           className="mt-12"
           initial={{ opacity: 0 }}
@@ -67,7 +62,6 @@ export default function App() {
           <Herbtrack />
         </motion.section>
 
-        {/* How it works */}
         <motion.section
           className="mt-12"
           initial={{ opacity: 0, y: 10 }}
@@ -78,23 +72,19 @@ export default function App() {
           <HowItWorks />
         </motion.section>
 
-        {/* Database */}
         <section className="mt-12">
           <HerbsDatabase />
         </section>
 
-        {/* Slideshow */}
         <section className="mt-8">
           <Slideshow />
         </section>
 
-        {/* Chatbot */}
         <Chatbot />
 
         <div className="h-28" />
       </main>
 
-      {/* Footer */}
       <footer className="w-full py-6 text-center text-sm text-slate-600 border-t">
         © {new Date().getFullYear()} HerbTrack • Crafted with care ✨
       </footer>

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { TRANS } from "../utils/anim";
 
 // recommended: place the file at public/assets/Acalypha-indica.jpg
-const heroImage = "/assets/Acalypha-indica.jpg";
+const heroImage = "Acalypha indica.jpg";
 
 export default function Hero() {
   return (

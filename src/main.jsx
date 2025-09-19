@@ -7,10 +7,12 @@ import App from "./App";
 import Dashboard from "./Pages/Dashboard";
 import BlockchainDashboard from "./Pages/BlockchainDashboard";
 import Traceability from "./Pages/Traceability";
-import GeoTracking from "./Pages/GeoTracking"; // ✅ new page
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
-import FeaturesPage from "./Pages/FeaturesPage"; // ✅ dedicated Features page
+import GeoTracking from "./Pages/GeoTracking";
+import FeaturesPage from "./Pages/FeaturesPage"; // <-- features page
+import OpenHerbDatabasePage from "./Pages/OpenHerbDatabasePage"; // new page
+import HerbDatabasePage from "./Pages/HerbDatabasePage";
 import ProtectedRoute from "./Components/ProtectedRoute";
 
 import "./index.css";
@@ -19,10 +21,8 @@ createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        {/* Home */}
         <Route path="/" element={<App />} />
 
-        {/* Dashboards (protected) */}
         <Route
           path="/dashboard"
           element={
@@ -40,14 +40,14 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* Other pages */}
+        <Route path="/features" element={<FeaturesPage />} />   {/* <-- features route */}
+        <Route path="/features/open-herb-database" element={<OpenHerbDatabasePage />} /> {/* dedicated DB+QR page */}
         <Route path="/trace" element={<Traceability />} />
         <Route path="/geo-tracking" element={<GeoTracking />} />
-        <Route path="/features" element={<FeaturesPage />} /> {/* ✅ new route */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/herb-database" element={<HerbDatabasePage />} />
 
-        {/* Fallback */}
         <Route path="*" element={<App />} />
       </Routes>
     </BrowserRouter>
