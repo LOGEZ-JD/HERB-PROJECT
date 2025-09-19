@@ -15,7 +15,7 @@ export default function Navbar() {
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey); 
   }, []);
 
   useEffect(() => {
@@ -90,13 +90,62 @@ export default function Navbar() {
 
       <AnimatePresence>
         {open && (
-          <motion.div id="mobile-menu" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.22 }} className="md:hidden overflow-hidden px-6 pb-6 bg-white/70 backdrop-blur">
+          <motion.div
+            id="mobile-menu"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.22 }}
+            className="md:hidden overflow-hidden px-6 pb-6 bg-white/70 backdrop-blur"
+          >
             <div className="flex flex-col gap-2">
-              <NavLink to="/" onClick={() => setOpen(false)} className={({ isActive }) => `py-3 px-3 rounded-lg ${isActive ? "bg-violet-50 text-violet-700 font-semibold" : "text-slate-700 hover:bg-violet-50"}`}>Home</NavLink>
-              <NavLink to="/features" onClick={() => setOpen(false)} className="py-3 px-3 rounded-lg text-slate-700 hover:bg-violet-50">Features</NavLink>
-              <NavLink to="/database" onClick={() => setOpen(false)} className={({ isActive }) => `py-3 px-3 rounded-lg ${isActive ? "bg-violet-50 text-violet-700 font-semibold" : "text-slate-700 hover:bg-violet-50"}`}>Database</NavLink>
-              <NavLink to="/trace" onClick={() => setOpen(false)} className={({ isActive }) => `py-3 px-3 rounded-lg ${isActive ? "bg-violet-50 text-violet-700 font-semibold" : "text-slate-700 hover:bg-violet-50"}`}>Trace</NavLink>
-              <NavLink to="/geo-tracking" onClick={() => setOpen(false)} className={({ isActive }) => `py-3 px-3 rounded-lg ${isActive ? "bg-violet-50 text-violet-700 font-semibold" : "text-slate-700 hover:bg-violet-50"}`}>Geo-Tracking</NavLink>
+              <NavLink
+                to="/"
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `py-3 px-3 rounded-lg ${isActive ? "bg-violet-50 text-violet-700 font-semibold" : "text-slate-700 hover:bg-violet-50"}`
+                }
+              >
+                Home
+              </NavLink>
+
+              <NavLink
+                to="/features"
+                onClick={() => setOpen(false)}
+                className="py-3 px-3 rounded-lg text-slate-700 hover:bg-violet-50"
+              >
+                Features
+              </NavLink>
+
+              <NavLink
+                to="/database"
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `py-3 px-3 rounded-lg ${isActive ? "bg-violet-50 text-violet-700 font-semibold" : "text-slate-700 hover:bg-violet-50"}`
+                }
+              >
+                Database
+              </NavLink>
+
+              <NavLink
+                to="/trace"
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `py-3 px-3 rounded-lg ${isActive ? "bg-violet-50 text-violet-700 font-semibold" : "text-slate-700 hover:bg-violet-50"}`
+                }
+              >
+                Trace
+              </NavLink>
+
+              <NavLink
+                to="/geo-tracking"
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `py-3 px-3 rounded-lg ${isActive ? "bg-violet-50 text-violet-700 font-semibold" : "text-slate-700 hover:bg-violet-50"}`
+                }
+              >
+                Geo-Tracking
+              </NavLink>
 
               <div className="pt-3">
                 {user ? (

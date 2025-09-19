@@ -10,9 +10,8 @@ import Traceability from "./Pages/Traceability";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import GeoTracking from "./Pages/GeoTracking";
-import FeaturesPage from "./Pages/FeaturesPage"; // <-- features page
-import OpenHerbDatabasePage from "./Pages/OpenHerbDatabasePage"; // new page
-import HerbDatabasePage from "./Pages/HerbDatabasePage";
+import FeaturesPage from "./Pages/FeaturesPage";
+import OpenHerbDatabasePage from "./Pages/OpenHerbDatabasePage";
 import ProtectedRoute from "./Components/ProtectedRoute";
 
 import "./index.css";
@@ -40,13 +39,15 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        <Route path="/features" element={<FeaturesPage />} />   {/* <-- features route */}
-        <Route path="/features/open-herb-database" element={<OpenHerbDatabasePage />} /> {/* dedicated DB+QR page */}
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route
+          path="/features/open-herb-database"
+          element={<OpenHerbDatabasePage />}
+        />
         <Route path="/trace" element={<Traceability />} />
         <Route path="/geo-tracking" element={<GeoTracking />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/herb-database" element={<HerbDatabasePage />} />
 
         <Route path="*" element={<App />} />
       </Routes>
