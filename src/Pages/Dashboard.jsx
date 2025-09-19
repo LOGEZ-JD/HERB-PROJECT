@@ -1,7 +1,8 @@
 // src/Pages/Dashboard.jsx
-import React, { useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Database, Clock, Download, QrCode, Activity, Layers } from "lucide-react";
+import { CheckCircle, Database, Clock, Download, QrCode, Activity, Layers, AlertTriangle } from "lucide-react";
+import { listenToBatches } from "../lib/firestoreBatchApi";
 
 /**
  * Small utilities
@@ -11,6 +12,23 @@ function formatNumber(n) {
   if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
   return String(n);
 }
+
+function timeSince(date) {
+  if (!date) return "";
+  const seconds = Math.floor((new Date() - date) / 1000);
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + "y";
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + "m";
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + "d";
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + "h";
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + "m";
+  return Math.floor(seconds) + "s";
+}
+
 
 /**
  * Simple inline sparkline (no external libs)
@@ -100,26 +118,70 @@ function TimelineItem({ icon, title, subtitle, time }) {
  * Main dashboard page
  */
 export default function Dashboard() {
-  // demo values; integrate with backend later
-  const stats = useMemo(
-    () => [
-      { title: "Trace Events", value: formatNumber(5421), delta: 4.2, spark: [4, 5, 7, 8, 9, 8, 10], icon: <Activity /> },
-      { title: "Verified", value: formatNumber(4210), delta: 1.8, spark: [6, 6, 7, 7, 6, 7, 8], icon: <CheckCircle /> },
-      { title: "Batches", value: formatNumber(842), delta: -0.5, spark: [2, 3, 4, 3, 5, 4, 4], icon: <Database /> },
-    ],
-    []
-  );
+  const [batches, setBatches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const events = [
-    { id: 1, title: "Ashwagandha - Collected", subtitle: "Geo-tag added", time: "2h" },
-    { id: 2, title: "Turmeric - Lab", subtitle: "Certificate attached", time: "6h" },
-    { id: 3, title: "Batch TRC-003 - On chain", subtitle: "Transaction confirmed", time: "1d" },
-  ];
+  useEffect(() => {
+    setLoading(true);
+    const unsubscribe = listenToBatches(
+      (data) => {
+        setBatches(data);
+        setLoading(false);
+      },
+      (err) => {
+        console.error(err);
+        setError("Could not connect to the database. Please check your connection and try again.");
+        setLoading(false);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
-  const summary = [
-    { id: "TRC-001", title: "TRC-001 Collection", meta: "GPS + photo", date: "2025-09-16" },
-    { id: "TRC-003", title: "TRC-003 Lab", meta: "Certificate LAB-998", date: "2025-09-15" },
-  ];
+  const stats = useMemo(() => {
+    const totalBatches = batches.length;
+    const verifiedBatches = batches.filter(b => b.status === 'Verified').length;
+    // dummy data for now
+    const traceEvents = totalBatches * 10; 
+
+    return [
+      { title: "Trace Events", value: formatNumber(traceEvents), delta: 4.2, spark: [4, 5, 7, 8, 9, 8, 10], icon: <Activity /> },
+      { title: "Verified", value: formatNumber(verifiedBatches), delta: 1.8, spark: [6, 6, 7, 7, 6, 7, 8], icon: <CheckCircle /> },
+      { title: "Batches", value: formatNumber(totalBatches), delta: -0.5, spark: [2, 3, 4, 3, 5, 4, 4], icon: <Database /> },
+    ]
+  }, [batches]);
+
+  const recentEvents = useMemo(() => {
+    return batches.slice(0, 3).map(b => ({
+      id: b.id,
+      title: `${b.name} - ${b.status}`,
+      subtitle: b.notes,
+      time: timeSince(b.createdAt?.toDate())
+    }))
+  }, [batches]);
+
+  const recentSummary = useMemo(() => {
+    return batches.slice(0, 2).map(b => ({
+      id: b.id,
+      title: `${b.id.substring(0,6)}... - ${b.name}`,
+      meta: b.status,
+      date: b.collectionDate,
+    }))
+  }, [batches]);
+
+  if (loading) {
+    return <div className="p-8 text-center">Loading dashboard...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 text-center text-red-600 bg-red-50 rounded-lg max-w-md mx-auto">
+        <AlertTriangle className="mx-auto w-12 h-12 mb-4" />
+        <h2 className="text-xl font-semibold mb-2">Connection Error</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-emerald-50 p-8">
@@ -157,7 +219,7 @@ export default function Dashboard() {
               </div>
 
               <div className="space-y-3">
-                {events.map((ev) => (
+                {recentEvents.map((ev) => (
                   <motion.div key={ev.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: ev.id * 0.06 }} className="rounded-lg border p-3 bg-white">
                     <TimelineItem icon={<Clock />} title={ev.title} subtitle={ev.subtitle} time={ev.time} />
                   </motion.div>
@@ -217,7 +279,7 @@ export default function Dashboard() {
             <div className="card p-6 rounded-2xl">
               <h4 className="font-semibold">Recent Summary</h4>
               <div className="mt-4 space-y-3">
-                {summary.map((s) => (
+                {recentSummary.map((s) => (
                   <motion.div key={s.id} initial={{ y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.25 }} className="rounded-lg border p-3 bg-white">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-700">

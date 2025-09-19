@@ -61,7 +61,7 @@ export async function getBatch(id) {
  * Subscribe to all batches (real-time auto-refresh)
  * Callback gets an array of batch objects
  */
-export function listenToBatches(callback) {
+export function listenToBatches(callback, errorCallback) {
   const q = query(collection(db, "batches"), orderBy("createdAt", "desc"));
   return onSnapshot(q, (snapshot) => {
     const batches = snapshot.docs.map((doc) => ({
@@ -69,5 +69,5 @@ export function listenToBatches(callback) {
       ...doc.data(),
     }));
     callback(batches);
-  });
+  }, errorCallback);
 }
