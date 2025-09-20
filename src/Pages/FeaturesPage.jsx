@@ -2,11 +2,11 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Database, MapPin, Users } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 /**
  * GRID items define title, text, icon and the slug (id) for the detail section.
- * "slug" is used for scrolling to the detail area.
+ * "slug" is used for scrolling to the detail area when appropriate.
  */
 const GRID = [
   {
@@ -14,6 +14,8 @@ const GRID = [
     title: "Open Herb Database",
     text: "Search by name, properties, region, and more.",
     slug: "open-herb-database",
+    // route: when present, clicking this card will navigate instead of scrolling
+    route: "/database",
   },
   {
     icon: <MapPin className="w-6 h-6" />,
@@ -31,11 +33,16 @@ const GRID = [
 
 const cardAnim = {
   hidden: { y: 18, opacity: 0 },
-  visible: (i = 0) => ({ y: 0, opacity: 1, transition: { duration: 0.5, delay: i * 0.08, ease: "easeOut" } }),
+  visible: (i = 0) => ({
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.5, delay: i * 0.08, ease: "easeOut" },
+  }),
 };
 
 export default function FeaturesPage() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // on load, if URL has a hash like #geo-collation, scroll to that element
   useEffect(() => {
@@ -43,15 +50,22 @@ export default function FeaturesPage() {
       const id = location.hash.replace("#", "");
       const el = document.getElementById(id);
       if (el) {
-        // slightly delay to ensure layout finished
         setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
       }
     }
   }, [location]);
 
   function scrollToSlug(slug) {
+    // if card has route configured (like database), navigate instead
+    const item = GRID.find((g) => g.slug === slug);
+    if (item && item.route) {
+      navigate(item.route);
+      return;
+    }
+
     const el = document.getElementById(slug);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+
     // update URL hash without reloading
     if (window && window.history && window.history.pushState) {
       window.history.pushState(null, "", `#${slug}`);
@@ -61,7 +75,12 @@ export default function FeaturesPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-emerald-50">
       <section className="max-w-7xl mx-auto px-6 py-12">
-        <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-4xl font-extrabold text-emerald-900 text-center mb-6">
+        <motion.h1
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-4xl font-extrabold text-emerald-900 text-center mb-6"
+        >
           Features
         </motion.h1>
 
@@ -90,7 +109,10 @@ export default function FeaturesPage() {
               <p className="mt-3 text-slate-600">{g.text}</p>
 
               <div className="mt-6 flex items-center justify-between">
-                <button onClick={() => scrollToSlug(g.slug)} className="inline-flex items-center gap-2 text-emerald-700 font-medium hover:underline">
+                <button
+                  onClick={() => scrollToSlug(g.slug)}
+                  className="inline-flex items-center gap-2 text-emerald-700 font-medium hover:underline"
+                >
                   Learn more →
                 </button>
                 <span className="text-xs text-slate-400">Core</span>
@@ -114,7 +136,9 @@ export default function FeaturesPage() {
             <div className="md:flex-1">
               <h2 className="text-2xl font-bold text-slate-900">Open Herb Database</h2>
               <p className="mt-3 text-slate-600 max-w-3xl">
-                A searchable open database of herbs: common and scientific names, properties, regional variants, and cultivation notes. Filter by region, properties, and uses — and link to trace events and lab results for each batch.
+                A searchable open database of herbs: common and scientific names, properties, regional variants,
+                and cultivation notes. Filter by region, properties, and uses — and link to trace events and lab
+                results for each batch.
               </p>
 
               <ul className="mt-4 space-y-2 text-slate-600">
@@ -138,7 +162,8 @@ export default function FeaturesPage() {
             <div className="md:flex-1">
               <h2 className="text-2xl font-bold text-slate-900">Geo Collation</h2>
               <p className="mt-3 text-slate-600 max-w-3xl">
-                Pin exact harvest coordinates and local conditions to each batch. Store GPS coordinates, elevation, growth-site photos, and microclimate notes for audit-ready traceability.
+                Pin exact harvest coordinates and local conditions to each batch. Store GPS coordinates, elevation,
+                growth-site photos, and microclimate notes for audit-ready traceability.
               </p>
 
               <ul className="mt-4 space-y-2 text-slate-600">
@@ -162,7 +187,8 @@ export default function FeaturesPage() {
             <div className="md:flex-1">
               <h2 className="text-2xl font-bold text-slate-900">Community</h2>
               <p className="mt-3 text-slate-600 max-w-3xl">
-                Grower profiles, certifications, and ratings let buyers and auditors evaluate provenance and quality. Share best practices, certifications and reputation metrics across the community.
+                Grower profiles, certifications, and ratings let buyers and auditors evaluate provenance and quality.
+                Share best practices, certifications and reputation metrics across the community.
               </p>
 
               <ul className="mt-4 space-y-2 text-slate-600">

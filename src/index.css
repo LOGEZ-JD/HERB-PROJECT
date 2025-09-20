@@ -60,18 +60,3 @@ body {
   box-shadow: 0 0 0 4px rgba(6,182,212,0.12);
   border-radius: 8px;
 }
-
-/* animated subtle appearing */
-.fade-in {
-  animation: fadeInUp .56s cubic-bezier(.22,.9,.36,1) both;
-}
-@keyframes fadeInUp {
-  from { transform: translateY(8px); opacity:0; }
-  to { transform: translateY(0); opacity:1; }
-}
-
-/* small rounded pill */
-.pill { background: #ecfdf5; color: var(--accent); padding: 6px 10px; border-radius:999px; font-weight:600; font-size:0.85rem; }
-
-/* responsive container */
-.container-max { max-width: 1200px; margin: 0 auto; padding-left: 1.25rem; padding-right: 1.25rem; }
